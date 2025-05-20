@@ -1,4 +1,4 @@
-- name: Ejecutar el script adecuado según disponibilidad de Perl
+- name: Ejecutar script IAM según disponibilidad de Perl
   hosts: all
   become: false
   tasks:
@@ -6,7 +6,7 @@
     - name: Verificar si Perl está instalado
       command: which perl
       register: perl_check
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Copiar script Perl si Perl está disponible
       copy:
@@ -15,9 +15,11 @@
         mode: '0755'
       when: perl_check.rc == 0
 
-    - name: Ejecutar script Perl
+    - name: Ejecutar script Perl con sudo
+      become: true
       command: perl /tmp/iam_extract_global.pl
       register: salida_script_perl
+      failed_when: salida_script_perl.rc != 0 and salida_script_perl.rc != 8
       when: perl_check.rc == 0
 
     - name: Copiar script Shell si Perl NO está disponible
@@ -27,9 +29,11 @@
         mode: '0755'
       when: perl_check.rc != 0
 
-    - name: Ejecutar script Shell
+    - name: Ejecutar script Shell con sudo
+      become: true
       command: /bin/bash /tmp/iam_extract_global.sh
       register: salida_script_sh
+      failed_when: salida_script_sh.rc != 0 and salida_script_sh.rc != 8
       when: perl_check.rc != 0
 
     - name: Mostrar salida del script Perl (si se ejecutó)
