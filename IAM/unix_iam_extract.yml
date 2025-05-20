@@ -6,7 +6,8 @@
     - name: Verificar si Perl está instalado
       command: which perl
       register: perl_check
-      ignore_errors: true
+      failed_when: false
+      changed_when: false
 
     - name: Copiar script Perl si Perl está disponible
       copy:
