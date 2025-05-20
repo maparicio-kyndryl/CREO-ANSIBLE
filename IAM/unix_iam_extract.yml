@@ -1,0 +1,18 @@
+- name: Ejecutar script Perl en el servidor remoto
+  hosts: all
+  become: false
+  tasks:
+
+    - name: Copiar script Perl al servidor remoto
+      copy:
+        src: iam_extract_global.pl
+        dest: /tmp/iam_extract_global.pl
+        mode: '0755'
+
+    - name: Ejecutar el script
+      command: perl /tmp/iam_extract_global.pl
+      register: salida_script
+
+    - name: Mostrar salida del script
+      debug:
+        var: salida_script.stdout_lines
