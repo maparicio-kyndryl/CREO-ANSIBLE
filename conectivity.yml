@@ -1,0 +1,6 @@
+- name: Mostrar el hostname del servidor remoto
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Ejecutar hostname
+      command: hostname
