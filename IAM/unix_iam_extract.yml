@@ -1,18 +1,43 @@
-- name: Ejecutar script Perl en el servidor remoto
+- name: Ejecutar el script adecuado según disponibilidad de Perl
   hosts: all
   become: false
   tasks:
 
-    - name: Copiar script Perl al servidor remoto
+    - name: Verificar si Perl está instalado
+      command: which perl
+      register: perl_check
+      ignore_errors: yes
+
+    - name: Copiar script Perl si Perl está disponible
       copy:
         src: iam_extract_global.pl
         dest: /tmp/iam_extract_global.pl
         mode: '0755'
+      when: perl_check.rc == 0
 
-    - name: Ejecutar el script
+    - name: Ejecutar script Perl
       command: perl /tmp/iam_extract_global.pl
-      register: salida_script
+      register: salida_script_perl
+      when: perl_check.rc == 0
 
-    - name: Mostrar salida del script
+    - name: Copiar script Shell si Perl NO está disponible
+      copy:
+        src: iam_extract_global.sh
+        dest: /tmp/iam_extract_global.sh
+        mode: '0755'
+      when: perl_check.rc != 0
+
+    - name: Ejecutar script Shell
+      command: /bin/bash /tmp/iam_extract_global.sh
+      register: salida_script_sh
+      when: perl_check.rc != 0
+
+    - name: Mostrar salida del script Perl (si se ejecutó)
       debug:
-        var: salida_script.stdout_lines
+        var: salida_script_perl.stdout_lines
+      when: perl_check.rc == 0
+
+    - name: Mostrar salida del script Shell (si se ejecutó)
+      debug:
+        var: salida_script_sh.stdout_lines
+      when: perl_check.rc != 0
