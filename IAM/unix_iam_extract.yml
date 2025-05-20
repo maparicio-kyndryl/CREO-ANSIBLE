@@ -18,7 +18,7 @@
 
     - name: Ejecutar script Perl con sudo
       become: true
-      command: perl /tmp/iam_extract_global.pl 2>/dev/null
+      shell: perl /tmp/iam_extract_global.pl 2>/dev/null
       register: salida_script_perl
       failed_when: salida_script_perl.rc != 0 and salida_script_perl.rc != 8
       when: perl_check.rc == 0
@@ -32,7 +32,7 @@
 
     - name: Ejecutar script Shell con sudo
       become: true
-      command: /bin/bash /tmp/iam_extract_global.sh 2>/dev/null
+      shell: /bin/bash /tmp/iam_extract_global.sh 2>/dev/null
       register: salida_script_sh
       failed_when: salida_script_sh.rc != 0 and salida_script_sh.rc != 8
       when: perl_check.rc != 0
