@@ -20,7 +20,7 @@
       become: true
       shell: perl /tmp/iam_extract_global.pl 2>/dev/null
       register: salida_script_perl
-      failed_when: salida_script_perl.rc != 0 and salida_script_perl.rc != 8
+      failed_when: salida_script_sh.rc not in [0, 1, 8]
       when: perl_check.rc == 0
 
     - name: Copiar script Shell si Perl NO está disponible
@@ -34,7 +34,7 @@
       become: true
       shell: /bin/bash /tmp/iam_extract_global.sh 2>/dev/null
       register: salida_script_sh
-      failed_when: salida_script_sh.rc != 0 and salida_script_sh.rc != 8
+      failed_when: salida_script_sh.rc not in [0, 1, 8]
       when: perl_check.rc != 0
 
     - name: Mostrar salida del script Perl (si se ejecutó)
