@@ -1,9 +1,9 @@
+---
 - name: Crear SOCKS5 desde AWX al jump host
   hosts: localhost
   gather_facts: false
   connection: local
   tasks:
-
     - name: Crear túnel SOCKS5 hacia el jump host
       shell: |
         ps -ef | grep "[s]sh.*-D 4001" || ssh -f -N -D 4001 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null alcipat1@10.72.3.245
@@ -17,8 +17,6 @@
           no_proxy: 127.0.0.1,localhost
       cacheable: true
 
----
-
 - name: Copiar y ejecutar script en Windows usando el túnel
   hosts: windows_target
   gather_facts: false
@@ -29,7 +27,6 @@
     ansible_port: 5985
   environment: "{{ proxy_env }}"
   tasks:
-
     - name: Asegurar carpeta C:\Kyndryl
       win_file:
         path: C:\Kyndryl
@@ -56,8 +53,6 @@
     - name: Ejecutar iam_extract.ps1 con /L:Local si es servidor miembro
       win_command: powershell -ExecutionPolicy Bypass -File C:\Kyndryl\iam_extract.ps1 /L:Local
       when: domain_role.stdout | int == 3
-
----
 
 - name: Cerrar túnel SOCKS5
   hosts: localhost
