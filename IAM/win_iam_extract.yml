@@ -14,7 +14,6 @@
           https_proxy: socks5h://localhost:4001
           http_proxy: socks5h://localhost:4001
           no_proxy: 127.0.0.1,localhost
-      cacheable: true
 
 - name: Copiar y ejecutar script en Windows usando el túnel
   hosts: windows_target
