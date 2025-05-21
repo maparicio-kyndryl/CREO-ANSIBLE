@@ -1,4 +1,3 @@
----
 - name: Crear SOCKS5 desde AWX al jump host
   hosts: localhost
   gather_facts: false
