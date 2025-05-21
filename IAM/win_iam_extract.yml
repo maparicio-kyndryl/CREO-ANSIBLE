@@ -1,5 +1,5 @@
 - name: Crear SOCKS5 desde AWX al jump host
-  hosts: localhost
+  hosts: 127.0.0.1
   gather_facts: false
   connection: local
   tasks:
