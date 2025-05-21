@@ -1,0 +1,71 @@
+---
+- name: Crear SOCKS5 desde AWX al jump host
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+
+    - name: Crear túnel SOCKS5 hacia el jump host
+      shell: |
+        ps -ef | grep "[s]sh.*-D 4001" || ssh -f -N -D 4001 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null alcipat1@10.72.3.245
+      changed_when: false
+
+    - name: Exportar variable de entorno para el proxy
+      set_fact:
+        proxy_env:
+          https_proxy: socks5h://localhost:4001
+          http_proxy: socks5h://localhost:4001
+          no_proxy: 127.0.0.1,localhost
+      cacheable: true
+
+---
+
+- name: Copiar y ejecutar script en Windows usando el túnel
+  hosts: windows_target
+  gather_facts: false
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_transport: basic
+    ansible_winrm_server_cert_validation: ignore
+    ansible_port: 5985
+  environment: "{{ proxy_env }}"
+  tasks:
+
+    - name: Asegurar carpeta C:\Kyndryl
+      win_file:
+        path: C:\Kyndryl
+        state: directory
+
+    - name: Copiar iam_extract.ps1
+      win_copy:
+        src: iam_extract.ps1
+        dest: C:\Kyndryl\iam_extract.ps1
+
+    - name: Copiar Get-LocalGroupMembership.ps1
+      win_copy:
+        src: Get-LocalGroupMembership.ps1
+        dest: C:\Kyndryl\Get-LocalGroupMembership.ps1
+
+    - name: Detectar si es Domain Controller
+      win_command: powershell -Command "(Get-WmiObject Win32_ComputerSystem).DomainRole"
+      register: domain_role
+
+    - name: Ejecutar iam_extract.ps1 si es Domain Controller
+      win_command: powershell -ExecutionPolicy Bypass -File C:\Kyndryl\iam_extract.ps1
+      when: domain_role.stdout | int == 4 or domain_role.stdout | int == 5
+
+    - name: Ejecutar iam_extract.ps1 con /L:Local si es servidor miembro
+      win_command: powershell -ExecutionPolicy Bypass -File C:\Kyndryl\iam_extract.ps1 /L:Local
+      when: domain_role.stdout | int == 3
+
+---
+
+- name: Cerrar túnel SOCKS5
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Cerrar túnel SOCKS5 creado
+      shell: |
+        ps -ef | grep '[s]sh.*-D 4001' | awk '{print $2}' | xargs -r kill
+      ignore_errors: true
