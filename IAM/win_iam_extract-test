@@ -1,0 +1,16 @@
+- name: Crear SOCKS5 desde AWX al jump host
+  hosts: 127.0.0.1
+  gather_facts: false
+  connection: local
+  tasks:
+    - name: Crear túnel SOCKS5 hacia el jump host
+      shell: |
+        ps -ef | grep "[s]sh.*-D 4001" || ssh -f -N -D 4001 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null alcipat1@10.72.3.245
+      changed_when: false
+
+    - name: Exportar variable de entorno para el proxy
+      set_fact:
+        proxy_env:
+          https_proxy: socks5h://localhost:4001
+          http_proxy: socks5h://localhost:4001
+          no_proxy: 127.0.0.1,localhost
