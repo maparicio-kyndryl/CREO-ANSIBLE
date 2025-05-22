@@ -16,7 +16,7 @@
           no_proxy: 127.0.0.1,localhost
 
 - name: Copiar y ejecutar script en Windows usando el túnel
-  hosts: windows_target
+  hosts: "{{ target_host }}"
   gather_facts: false
   vars:
     ansible_connection: winrm
