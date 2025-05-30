@@ -36,7 +36,11 @@
     when: file_to_process_path is not defined
     
 ### Tareas para copiado del archivo al servidor AWX
-        
+  - name: Definir IDs de Job o Workflow
+    ansible.builtin.set_fact:
+        current_id: "{{ awx_workflow_job_id | default(tower_workflow_job_id | default(awx_job_id | default(tower_job_id | default('unknown_id'))))}}"
+    delegate_to: localhost
+    run_once: true     
   - name: Hacer Fetch del archivo {{ file_to_process_path | basename }} desde {{ ansible_hostname }} al EE
     ansible.builtin.fetch:
         src: "{{ file_to_process_path }}"
