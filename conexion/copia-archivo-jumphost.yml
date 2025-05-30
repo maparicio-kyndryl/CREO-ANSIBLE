@@ -61,7 +61,7 @@
         state: directory
         mode: '0755'
     when: file_to_process_path is defined and fetch_result is successful and ee_file_stat.stat.exists
-    delegate_to: localhost
+    delegate_to: "{{ servidor_awx }}"
   - name: "Copiar {{ file_to_process_path | basename }} del EE al Host RHEL"
     ansible.builtin.copy:
         src: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
