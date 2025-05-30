@@ -39,10 +39,10 @@
 
     - name: Mostrar salida del script Perl (si se ejecutó)
       debug:
-        var: perl_check.stdout_lines
-      when: perl_check.rc != 0
+        var: salida_script_perl.stdout_lines
+      when: perl_check.rc == 0
 
     - name: Mostrar salida del script Shell (si se ejecutó)
       debug:
         var: salida_script_sh.stdout_lines
-      when: salida_script_sh.rc != 0
+      when: perl_check.rc != 0
