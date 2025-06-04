@@ -81,3 +81,4 @@
     loop:
     - /tmp/iam_extract_global.pl
     - "{{ file_to_process_path }}"
+    when: file_to_process_path is defined and fetch_result is successful and ee_file_stat.stat.exists
