@@ -73,3 +73,11 @@
         mode: '0644'
     when: file_to_process_path is defined and fetch_result is successful and ee_file_stat.stat.exists
     delegate_to: "{{ servidor_awx }}"
+  - name: Limpiar archivos en el ejecutables y archivos generados en servidor final
+    ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+        mode: '0755'
+    loop:
+    - /tmp/iam_extract_global.pl
+    - "{{ file_to_process_path }}"
