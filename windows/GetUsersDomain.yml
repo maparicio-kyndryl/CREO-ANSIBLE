@@ -7,19 +7,19 @@
     puerto_base_tunel_local: 59850
 
   pre_tasks:
-    - name: CÁLCULO DE PUERTO: Definir 'puerto_dinamico_tunel' para {{ inventory_hostname }}
+    - name: "CALCULO DE PUERTO: Definir 'puerto_dinamico_tunel' para {{ inventory_hostname }}"
       ansible.builtin.set_fact:
         puerto_dinamico_tunel: "{{ puerto_base_tunel_local | int + ansible_play_hosts_all.index(inventory_hostname) | int }}"
 
-    - name: Establecer ansible_port dinámico para {{ inventory_hostname }}
+    - name: "Establecer ansible_port dinámico para {{ inventory_hostname }}"
       ansible.builtin.set_fact:
         ansible_port: "{{ puerto_dinamico_tunel }}"
 
-    - name: DEBUG túnel
+    - name: "DEBUG tunel"
       ansible.builtin.debug:
         msg: "Túnel: 127.0.0.1:{{ puerto_dinamico_tunel }} -> {{ target_actual_ip }}:{{ target_actual_winrm_port }}"
 
-    - name: Establecer túnel SSH para {{ inventory_hostname }}
+    - name: "Establecer túnel SSH para {{ inventory_hostname }}"
       ansible.builtin.command: >
         ssh -f -N -L {{ puerto_dinamico_tunel }}:{{ target_actual_ip }}:{{ target_actual_winrm_port }}
         -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ExitOnForwardFailure=yes
@@ -29,7 +29,7 @@
       changed_when: false
       register: tunnel_setup_status
 
-    - name: Esperar que el túnel esté activo
+    - name: "Esperar que el túnel este activo"
       ansible.builtin.wait_for:
         host: 127.0.0.1
         port: "{{ puerto_dinamico_tunel }}"
@@ -40,7 +40,7 @@
       when: tunnel_setup_status.rc == 0
 
   tasks:
-    - name: Obtener usuarios KYND y su estado (activo/deshabilitado) en {{ inventory_hostname }}
+    - name: "Obtener usuarios KYND y su estado (activo/deshabilitado) en {{ inventory_hostname }}"
       ansible.windows.win_shell: |
         Get-LocalUser | Where-Object { $_.Name -like 'KYND*' } | Select-Object Name, Enabled | ForEach-Object {
           "$($_.Name): $($_.Enabled)"
@@ -48,20 +48,20 @@
       register: salida_usuarios
       when: tunnel_setup_status.rc == 0
 
-    - name: Mostrar salida de usuarios KYND en {{ inventory_hostname }}
+    - name: "Mostrar salida de usuarios KYND en {{ inventory_hostname }}"
       debug:
         var: salida_usuarios.stdout_lines
       when: salida_usuarios is defined
 
   post_tasks:
-    - name: Bloque para asegurar la terminación del túnel para {{ inventory_hostname }}
+    - name: "Bloque para asegurar la terminación del túnel para {{ inventory_hostname }}"
       delegate_to: localhost
       block:
-        - name: Debug - limpieza del túnel
+        - name: "Debug - limpieza del tunel"
           debug:
             msg: "Cerrando túnel local en puerto {{ puerto_dinamico_tunel }}"
       always:
-        - name: Terminar túnel SSH para {{ inventory_hostname }}
+        - name: "Terminar tunel SSH para {{ inventory_hostname }}"
           command: >
             pkill -f "ssh .* -L {{ puerto_dinamico_tunel}}:{{ target_actual_ip }}:{{ target_actual_winrm_port }}.*{{ jumphost_user }}@{{ jumphost_ip }}"
           changed_when: false
