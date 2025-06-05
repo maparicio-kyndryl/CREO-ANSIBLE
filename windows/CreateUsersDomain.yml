@@ -120,7 +120,9 @@
   tasks:
     - name: Crear o actualizar usuarios y enviar correo con credenciales
       win_shell: |
-        $usuarios = ConvertFrom-Json @'{{ usuarios | to_json }}'@
+        $usuarios = ConvertFrom-Json @'
+        {{ usuarios | to_json }}
+        '@
         $domain = (Get-ADDomain).NetBIOSName
 
         foreach ($u in $usuarios) {
