@@ -4,89 +4,89 @@
   gather_facts: no
   serial: 1
 
-vars:
-  puerto_base_tunel_local: 59850
-  usuarios:
-    - user: kyndpmoran
-      description: "815/K/000636/Kyndryl/Peter Principe/"
-      name: Peter
-      lastname: Moran
-      mail: Peter.MORAN.PRINCIPE@kyndryl.com
-    - user: kyndaaroni
-      description: "815/K/001616/Kyndryl/Anthony Aroni Quispe/"
-      name: Anthony
-      lastname: Aroni
-      mail: Anthony.Aroni.Quispe1@kyndryl.com
-    - user: kyndiarbulu
-      description: "815/K/001710/Kyndryl/Ionatan Ballesteros/"
-      name: Ionatan
-      lastname: Arbulu
-      mail: Ionatan.Arbulu1@kyndryl.com
-    - user: kyndoalvarez
-      description: "815/K/001777/Kyndryl/Oscar Garcia/"
-      name: Oscar
-      lastname: Alvarez
-      mail: Oscar.Alvarez.Garcia@kyndryl.com
-    - user: kyndjfranco
-      description: "815/K/6025943/Kyndryl/Jesus Augusto Franco/"
-      name: Jesus
-      lastname: Franco
-      mail: jesusaugusto.franco@kyndryl.com
-    - user: kyndjlegua
-      description: "815/K/001785/Kyndryl/Juan Cano/"
-      name: Juan Jose
-      lastname: Legua
-      mail: Juan.Legua.Cano1@kyndryl.com
-    - user: kyndegil
-      description: "815/K/001337/Kyndryl/Eder Jean Gil Chacon/"
-      name: Eder
-      lastname: Gil
-      mail: Eder.Gil.Chacon@kyndryl.com
-    - user: kyndrmontoya
-      description: "815/K/002294/Kyndryl/Ronald Montoya/"
-      name: Ronald
-      lastname: Montoya
-      mail: ronaldenrique.montoya@kyndryl.com
-    - user: kyndrsanchez
-      description: "815/K/6042664/Kyndryl/Roberto Sanchez/"
-      name: Roberto
-      lastname: Sanchez
-      mail: robertoalexander.sanchez@kyndryl.com
-    - user: kyndmartin
-      description: "815/K/000944/Kyndryl/Aparicio Torres Martin Josimar/"
-      name: Martin
-      lastname: Aparicio
-      mail: maparicio@kyndryl.com
-    - user: kyndicortez
-      description: "851/K/6042666/Kyndryl/Ivan Cortez/"
-      name: Ivan
-      lastname: Cortez
-      mail: ivanwalter.cortezana@kyndryl.com
-    - user: kyndaluna
-      description: "815/K/000839/Kyndryl/Alvaro Edgard Luna Mori/"
-      name: Alvaro
-      lastname: Luna
-      mail: Alvaro.Edgard.Luna.Mori@kyndryl.com
-    - user: kyndcvaldivia
-      description: "815/K/002268/Kyndryl/Carlos Valdivia Arrunategui/"
-      name: Carlos
-      lastname: Valdivia
-      mail: Carlos.Valdivia.Arrunategui@kyndryl.com
-    - user: kyndavaldivia
-      description: "815/K/001378/Kyndryl/Arturo Valdivia/"
-      name: Arturo
-      lastname: Valdivia
-      mail: Arturo.Valdivia@kyndryl.com
-    - user: kyndjlanda
-      description: "815/K/6027104/Kyndryl/Jose Landa/"
-      name: Jose
-      lastname: Landa
-      mail: jose.landa@kyndryl.com
-    - user: kyndjbustios
-      description: "815/K/001818/Kyndryl/Jose Bustios/"
-      name: Jose
-      lastname: Bustios
-      mail: Jose.Bustios@kyndryl.com
+  vars:
+    puerto_base_tunel_local: 59850
+    usuarios:
+      - user: kyndpmoran
+        description: "815/K/000636/Kyndryl/Peter Principe/"
+        name: Peter
+        lastname: Moran
+        mail: Peter.MORAN.PRINCIPE@kyndryl.com
+      - user: kyndaaroni
+        description: "815/K/001616/Kyndryl/Anthony Aroni Quispe/"
+        name: Anthony
+        lastname: Aroni
+        mail: Anthony.Aroni.Quispe1@kyndryl.com
+      - user: kyndiarbulu
+        description: "815/K/001710/Kyndryl/Ionatan Ballesteros/"
+        name: Ionatan
+        lastname: Arbulu
+        mail: Ionatan.Arbulu1@kyndryl.com
+      - user: kyndoalvarez
+        description: "815/K/001777/Kyndryl/Oscar Garcia/"
+        name: Oscar
+        lastname: Alvarez
+        mail: Oscar.Alvarez.Garcia@kyndryl.com
+      - user: kyndjfranco
+        description: "815/K/6025943/Kyndryl/Jesus Augusto Franco/"
+        name: Jesus
+        lastname: Franco
+        mail: jesusaugusto.franco@kyndryl.com
+      - user: kyndjlegua
+        description: "815/K/001785/Kyndryl/Juan Cano/"
+        name: Juan Jose
+        lastname: Legua
+        mail: Juan.Legua.Cano1@kyndryl.com
+      - user: kyndegil
+        description: "815/K/001337/Kyndryl/Eder Jean Gil Chacon/"
+        name: Eder
+        lastname: Gil
+        mail: Eder.Gil.Chacon@kyndryl.com
+      - user: kyndrmontoya
+        description: "815/K/002294/Kyndryl/Ronald Montoya/"
+        name: Ronald
+        lastname: Montoya
+        mail: ronaldenrique.montoya@kyndryl.com
+      - user: kyndrsanchez
+        description: "815/K/6042664/Kyndryl/Roberto Sanchez/"
+        name: Roberto
+        lastname: Sanchez
+        mail: robertoalexander.sanchez@kyndryl.com
+      - user: kyndmartin
+        description: "815/K/000944/Kyndryl/Aparicio Torres Martin Josimar/"
+        name: Martin
+        lastname: Aparicio
+        mail: maparicio@kyndryl.com
+      - user: kyndicortez
+        description: "851/K/6042666/Kyndryl/Ivan Cortez/"
+        name: Ivan
+        lastname: Cortez
+        mail: ivanwalter.cortezana@kyndryl.com
+      - user: kyndaluna
+        description: "815/K/000839/Kyndryl/Alvaro Edgard Luna Mori/"
+        name: Alvaro
+        lastname: Luna
+        mail: Alvaro.Edgard.Luna.Mori@kyndryl.com
+      - user: kyndcvaldivia
+        description: "815/K/002268/Kyndryl/Carlos Valdivia Arrunategui/"
+        name: Carlos
+        lastname: Valdivia
+        mail: Carlos.Valdivia.Arrunategui@kyndryl.com
+      - user: kyndavaldivia
+        description: "815/K/001378/Kyndryl/Arturo Valdivia/"
+        name: Arturo
+        lastname: Valdivia
+        mail: Arturo.Valdivia@kyndryl.com
+      - user: kyndjlanda
+        description: "815/K/6027104/Kyndryl/Jose Landa/"
+        name: Jose
+        lastname: Landa
+        mail: jose.landa@kyndryl.com
+      - user: kyndjbustios
+        description: "815/K/001818/Kyndryl/Jose Bustios/"
+        name: Jose
+        lastname: Bustios
+        mail: Jose.Bustios@kyndryl.com
 
   pre_tasks:
     - name: Calcular puerto dinámico de túnel
