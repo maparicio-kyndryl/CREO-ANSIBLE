@@ -127,7 +127,26 @@
 
         foreach ($u in $usuarios) {
           $username = $u.user
-          $password = -join ((65..90)+(97..122)+(48..57) | Get-Random -Count 15 | ForEach-Object {[char]$_})
+          # Caracteres por tipo
+          $mayus = [char[]](65..90)           # A-Z
+          $minus = [char[]](97..122)          # a-z
+          $num   = [char[]](48..57)           # 0-9
+          $spec  = [char[]]"!@#$%^&*()-_=+"
+
+          # Al menos 1 de cada tipo obligatorio
+          $base = @(
+            ($mayus | Get-Random -Count 1)
+            ($minus | Get-Random -Count 1)
+            ($num   | Get-Random -Count 1)
+            ($spec  | Get-Random -Count 1)
+          )
+
+          # Completar hasta 15 caracteres con mezcla
+          $all = $mayus + $minus + $num + $spec
+          $base += $all | Get-Random -Count (15 - $base.Count)
+          
+          # Mezclar y convertir a string
+          $password = ($base | Get-Random -Count 15) -join ""
           $securePass = ConvertTo-SecureString $password -AsPlainText -Force
 
           if (Get-ADUser -Filter "SamAccountName -eq '$username'") {
