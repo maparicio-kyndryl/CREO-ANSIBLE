@@ -1,6 +1,6 @@
 ---
 - name: Obtener usuarios KYND y su estado en Windows via túnel SSH (jumphost)
-  hosts: servidores_windows_via_jump
+  hosts: CG4_GROMERO_ADS
   gather_facts: false
   serial: 1
   vars:
