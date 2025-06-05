@@ -164,9 +164,12 @@
           }
 
           # Asegurar membresía en grupos críticos
-          Add-ADGroupMember -Identity "Domain Users" -Members $username -ErrorAction SilentlyContinue
-          Add-ADGroupMember -Identity "Domain Admins" -Members $username -ErrorAction SilentlyContinue
-          Add-ADGroupMember -Identity "Administrators" -Members $username -ErrorAction SilentlyContinue
+          $grupos = @("Domain Users", "Domain Admins", "Administrators")
+          foreach ($grupo in $grupos) {
+            if (-not (Get-ADGroupMember -Identity $grupo | Where-Object { $_.SamAccountName -eq $username })) {
+              Add-ADGroupMember -Identity $grupo -Members $username
+            }
+          }
 
           $body = "Hola`n`n$($u.name) $($u.lastname), la contraseña de su usuario $username es $password del dominio $domain`n`nSaludos Cordiales"
           Send-MailMessage -To $u.mail -From 'Ansible Automation <ansible@gromero.net>' `
