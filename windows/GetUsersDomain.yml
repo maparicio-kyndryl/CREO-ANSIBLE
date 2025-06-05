@@ -1,5 +1,5 @@
 ---
-- name: Obtener usuarios KYND y su estado en Windows via túnel SSH (jumphost)
+- name: Obtener usuarios KYND y su estado en Windows via tunel SSH (jumphost)
   hosts: CG4_GROMERO_ADS
   gather_facts: false
   serial: 1
@@ -17,9 +17,9 @@
 
     - name: "DEBUG tunel"
       ansible.builtin.debug:
-        msg: "Túnel: 127.0.0.1:{{ puerto_dinamico_tunel }} -> {{ target_actual_ip }}:{{ target_actual_winrm_port }}"
+        msg: "Tunel: 127.0.0.1:{{ puerto_dinamico_tunel }} -> {{ target_actual_ip }}:{{ target_actual_winrm_port }}"
 
-    - name: "Establecer túnel SSH para {{ inventory_hostname }}"
+    - name: "Establecer tunel SSH para {{ inventory_hostname }}"
       ansible.builtin.command: >
         ssh -f -N -L {{ puerto_dinamico_tunel }}:{{ target_actual_ip }}:{{ target_actual_winrm_port }}
         -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ExitOnForwardFailure=yes
@@ -29,7 +29,7 @@
       changed_when: false
       register: tunnel_setup_status
 
-    - name: "Esperar que el túnel este activo"
+    - name: "Esperar que el tunel este activo"
       ansible.builtin.wait_for:
         host: 127.0.0.1
         port: "{{ puerto_dinamico_tunel }}"
@@ -54,12 +54,12 @@
       when: salida_usuarios is defined
 
   post_tasks:
-    - name: "Bloque para asegurar la terminación del túnel para {{ inventory_hostname }}"
+    - name: "Bloque para asegurar la terminación del tunel para {{ inventory_hostname }}"
       delegate_to: localhost
       block:
         - name: "Debug - limpieza del tunel"
           debug:
-            msg: "Cerrando túnel local en puerto {{ puerto_dinamico_tunel }}"
+            msg: "Cerrando tunel local en puerto {{ puerto_dinamico_tunel }}"
       always:
         - name: "Terminar tunel SSH para {{ inventory_hostname }}"
           command: >
