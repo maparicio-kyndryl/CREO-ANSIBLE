@@ -142,13 +142,7 @@
                 -AccountPassword $securePass -Enabled $true
           }
 
-          $body = @"
-Hola
-
-$($u.name) $($u.lastname), la contraseña de su usuario $username es $password del dominio $domain
-
-Saludos Cordiales
-"@
+          $body = "Hola`n`n$($u.name) $($u.lastname), la contraseña de su usuario $username es $password del dominio $domain`n`nSaludos Cordiales"
           Send-MailMessage -To $u.mail -From 'Ansible Automation <ansible@gromero.net>' `
             -Subject "Credenciales de acceso al dominio $domain" `
             -Body $body -SmtpServer "10.32.2.113" -Port 25
