@@ -42,9 +42,7 @@
   tasks:
     - name: "Obtener usuarios KYND y su estado (activo/deshabilitado) en {{ inventory_hostname }}"
       ansible.windows.win_shell: |
-        Get-LocalUser | Where-Object { $_.Name -like 'KYND*' } | Select-Object Name, Enabled | ForEach-Object {
-          "$($_.Name): $($_.Enabled)"
-        }
+        Get-LocalUser | Where-Object { $_.Name -like 'KYND*' } | Select-Object Name, @{Name="Estado";Expression={ if ($_.Enabled) { "HABILITADO" } else { "DESHABILITADO" } }}, @{Name="ÚltimoCambioClave";Expression={ if ($_.PasswordLastSet) { $_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss") } else { "Nunca cambiada" } }}
       register: salida_usuarios
       when: tunnel_setup_status.rc == 0
 
