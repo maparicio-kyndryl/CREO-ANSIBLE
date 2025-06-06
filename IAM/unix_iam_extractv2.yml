@@ -1,5 +1,5 @@
 - name: Ejecutar IAM y trasladar archivo al servidor AWX
-  hosts: "{{ limit }}"
+  hosts: all
   become: false
   gather_facts: true
 
