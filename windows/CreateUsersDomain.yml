@@ -166,7 +166,7 @@
           # Asegurar membresía en grupos críticos
           $grupos = @("Domain Users", "Domain Admins", "Administrators")
           foreach ($grupo in $grupos) {
-            if (-not (Get-ADGroupMember -Identity $grupo | Where-Object { $_.SamAccountName -eq $username })) {
+            if (-not (Get-ADGroupMember -Identity $grupo -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
               Add-ADGroupMember -Identity $grupo -Members $username
             }
           }
