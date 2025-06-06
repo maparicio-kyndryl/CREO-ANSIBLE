@@ -82,7 +82,7 @@
         path: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
       register: ee_file_stat
       delegate_to: localhost
-      when: fetch_result is successful
+      when: fetch_result is defined and fetch_result.failed is not defined
 
     - name: Crear carpeta destino en RHEL
       file:
