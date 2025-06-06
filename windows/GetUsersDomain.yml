@@ -43,10 +43,10 @@
     - name: "Obtener usuarios KYND y su estado (activo/deshabilitado) en {{ inventory_hostname }}"
       ansible.windows.win_shell: |
         $domain = (Get-ADDomain).NetBIOSName
-        Get-LocalUser | Where-Object { $_.Name -like 'KYND*' } | ForEach-Object {
-        $estado = if ($_.Enabled) { "HABILITADO" } else { "DESHABILITADO" }
-        $fecha  = if ($_.PasswordLastSet) { $_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss") } else { "Nunca cambiada" }
-        "$($_.Name)|$estado|$fecha|$domain"
+        Get-ADUser -Filter { SamAccountName -like "kynd*" -or SamAccountName -like "ibm*" } -Properties Enabled, PasswordLastSet | ForEach-Object {
+          $estado = if ($_.Enabled) { "HABILITADO" } else { "DESHABILITADO" }
+          $fecha  = if ($_.PasswordLastSet) { $_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss") } else { "-" }
+          Write-Output "$($_.Name)|$estado|$fecha|$domain"
         }
       register: salida_usuarios
       when: tunnel_setup_status.rc == 0
