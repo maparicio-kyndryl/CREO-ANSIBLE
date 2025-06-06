@@ -77,12 +77,19 @@
       when: file_to_process_path is defined
       register: fetch_result
 
+    - name: Verificar que fetch fue exitoso
+      set_fact:
+        fetch_ok: true
+      when: fetch_result is defined and fetch_result.rc is defined and fetch_result.rc == 0
+      delegate_to: localhost
+      run_once: true
+
     - name: Verificar existencia en EE
       stat:
         path: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
       register: ee_file_stat
       delegate_to: localhost
-      when: fetch_result is defined and fetch_result.failed is not defined
+      when: fetch_ok | default(false)
 
     - name: Crear carpeta destino en RHEL
       file:
@@ -90,7 +97,7 @@
         state: directory
         mode: '0755'
       delegate_to: "{{ servidor_awx }}"
-      when: ee_file_stat is defined and ee_file_stat.stat is defined and ee_file_stat.stat.exists
+      when: ee_file_stat.stat.exists | default(false)
 
     - name: Copiar archivo desde EE a RHEL
       copy:
@@ -98,7 +105,7 @@
         dest: "{{ ruta_destino_en_rhel }}/{{ file_to_process_path | basename }}"
         mode: '0644'
       delegate_to: "{{ servidor_awx }}"
-      when: ee_file_stat is defined and ee_file_stat.stat is defined and ee_file_stat.stat.exists
+      when: ee_file_stat.stat.exists | default(false)
 
     - name: Limpiar archivos temporales en servidor remoto
       file:
@@ -109,4 +116,4 @@
         - /tmp/iam_extract_global.sh
         - "{{ file_to_process_path }}"
       become: true
-      when: file_to_process_path is defined and fetch_result is successful
+      when: file_to_process_path is defined and fetch_ok | default(false)
