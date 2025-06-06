@@ -1,0 +1,112 @@
+- name: Ejecutar IAM y trasladar archivo al servidor AWX
+  hosts: "{{ limit }}"
+  become: false
+  gather_facts: true
+
+  vars:
+    extensiones:
+      - .mef3
+      - .mef
+      - .mef4
+      - .scm9
+    ruta_del_archivo: /tmp
+    ruta_archivo_en_ee: /tmp
+    ruta_rhel: /var/lib/job-files/
+    ruta_destino_en_rhel: "{{ ruta_rhel }}{{ awx_job_id | default(tower_job_id | default('unknown_id')) }}"
+    servidor_awx: GROANSIBLE
+
+  tasks:
+
+    - name: Verificar si Perl está instalado
+      command: which perl
+      register: perl_check
+      failed_when: false
+      changed_when: false
+
+    - name: Copiar script Perl si está disponible
+      copy:
+        src: iam_extract_global.pl
+        dest: /tmp/iam_extract_global.pl
+        mode: '0755'
+      when: perl_check.rc == 0
+
+    - name: Ejecutar script Perl
+      become: true
+      shell: perl /tmp/iam_extract_global.pl 2>/dev/null
+      register: salida_script_perl
+      when: perl_check.rc == 0
+      failed_when: salida_script_perl.rc not in [0, 1, 8]
+
+    - name: Copiar script Bash si Perl NO está disponible
+      copy:
+        src: iam_extract_global.sh
+        dest: /tmp/iam_extract_global.sh
+        mode: '0755'
+      when: perl_check.rc != 0
+
+    - name: Ejecutar script Bash
+      become: true
+      shell: /bin/bash /tmp/iam_extract_global.sh 2>/dev/null
+      register: salida_script_sh
+      when: perl_check.rc != 0
+      failed_when: salida_script_sh.rc not in [0, 1, 8]
+
+    - name: Obtener nombre del host (minúsculas)
+      set_fact:
+        current_host: "{{ ansible_hostname | lower }}"
+
+    - name: Buscar archivo generado
+      find:
+        paths: "{{ ruta_del_archivo }}"
+        patterns: "{{ extensiones | map('regex_replace', '^\\.(.*)$', '(?i)^Kyndryl_.*_' + current_host + '\\.\\1$') | list }}"
+        use_regex: true
+        age: "-15m"
+        age_stamp: mtime
+      register: found_generated_files
+
+    - name: Seleccionar archivo más reciente
+      set_fact:
+        file_to_process_path: "{{ (found_generated_files.files | sort(attribute='mtime', reverse=true) | first).path | default(omit) }}"
+      when: found_generated_files.files | length > 0
+
+    - name: Hacer fetch del archivo al EE
+      fetch:
+        src: "{{ file_to_process_path }}"
+        dest: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
+        flat: yes
+      when: file_to_process_path is defined
+      register: fetch_result
+
+    - name: Verificar existencia en EE
+      stat:
+        path: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
+      register: ee_file_stat
+      delegate_to: localhost
+      when: fetch_result is successful
+
+    - name: Crear carpeta destino en RHEL
+      file:
+        path: "{{ ruta_destino_en_rhel }}"
+        state: directory
+        mode: '0755'
+      delegate_to: "{{ servidor_awx }}"
+      when: ee_file_stat.stat.exists
+
+    - name: Copiar archivo desde EE a RHEL
+      copy:
+        src: "{{ ruta_archivo_en_ee }}/{{ file_to_process_path | basename }}"
+        dest: "{{ ruta_destino_en_rhel }}/{{ file_to_process_path | basename }}"
+        mode: '0644'
+      delegate_to: "{{ servidor_awx }}"
+      when: ee_file_stat.stat.exists
+
+    - name: Limpiar archivos temporales en servidor remoto
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/iam_extract_global.pl
+        - /tmp/iam_extract_global.sh
+        - "{{ file_to_process_path }}"
+      become: true
+      when: file_to_process_path is defined and fetch_result is successful
