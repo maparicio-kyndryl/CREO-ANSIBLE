@@ -90,7 +90,7 @@
         state: directory
         mode: '0755'
       delegate_to: "{{ servidor_awx }}"
-      when: ee_file_stat.stat.exists
+      when: ee_file_stat is defined and ee_file_stat.stat is defined and ee_file_stat.stat.exists
 
     - name: Copiar archivo desde EE a RHEL
       copy:
@@ -98,7 +98,7 @@
         dest: "{{ ruta_destino_en_rhel }}/{{ file_to_process_path | basename }}"
         mode: '0644'
       delegate_to: "{{ servidor_awx }}"
-      when: ee_file_stat.stat.exists
+      when: ee_file_stat is defined and ee_file_stat.stat is defined and ee_file_stat.stat.exists
 
     - name: Limpiar archivos temporales en servidor remoto
       file:
