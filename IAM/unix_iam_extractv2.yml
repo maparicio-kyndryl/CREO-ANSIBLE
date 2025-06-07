@@ -1,5 +1,6 @@
 - name: Ejecutar IAM y trasladar archivo al servidor AWX
   hosts: all
+  serial: 1
   become: false
   gather_facts: true
 
