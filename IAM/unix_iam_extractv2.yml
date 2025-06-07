@@ -35,7 +35,7 @@
 
     - name: Ejecutar script Perl
       become: true
-      shell: umask 0077 && perl /tmp/iam_extract_global.pl 2>/dev/null
+      shell: perl /tmp/iam_extract_global.pl --owner alcipat1 2>/dev/null
       register: salida_script_perl
       when: perl_check.rc == 0
       failed_when: salida_script_perl.rc not in [0, 1, 8]
