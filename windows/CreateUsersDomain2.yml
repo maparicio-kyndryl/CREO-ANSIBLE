@@ -88,6 +88,7 @@
               $userStatus = Get-ADUser -Identity $username -Properties Enabled
               if (-not $userStatus.Enabled) {
                 Enable-ADAccount -Identity $username
+              }
           } else {
               New-ADUser -Name "$($u.name) $($u.lastname)" -SamAccountName $username `
                 -UserPrincipalName "$username@$domain.net" `
