@@ -84,6 +84,10 @@
                 -Description $u.description -EmailAddress $u.mail `
                 -GivenName $u.name -Surname $u.lastname
               Set-ADAccountPassword -Identity $username -NewPassword $securePass -Reset
+              # Activar cuenta si está deshabilitada
+              $userStatus = Get-ADUser -Identity $username -Properties Enabled
+              if (-not $userStatus.Enabled) {
+                Enable-ADAccount -Identity $username
           } else {
               New-ADUser -Name "$($u.name) $($u.lastname)" -SamAccountName $username `
                 -UserPrincipalName "$username@$domain.net" `
