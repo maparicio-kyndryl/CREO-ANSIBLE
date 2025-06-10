@@ -101,7 +101,7 @@
             if ($grupoObj) {
               $grupoDN = $grupoObj.DistinguishedName
               if (-not (Get-ADGroupMember -Identity $grupoDN -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
-                Add-ADGroupMember -Identity $grupo -Members $username
+                Add-ADGroupMember -Identity $grupoDN -Members $username
                 Write-Output "[AGREGADO] $username a $nombreGrupo"
               } else {
                 Write-Output "[YA ES MIEMBRO] $username en $nombreGrupo"
