@@ -95,11 +95,22 @@
 
           # Asegurar membresía en grupos críticos
           $grupos = @("Domain Users", "Domain Admins", "Administrators")
-          foreach ($grupo in $grupos) {
-            if (-not (Get-ADGroupMember -Identity $grupo -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
-              Add-ADGroupMember -Identity $grupo -Members $username
+          foreach ($nombreGrupo in $grupos) {
+            try {
+            $grupoObj = Get-ADGroup -Filter "Name -eq '$nombreGrupo'" -ErrorAction Stop
+            if ($grupoObj) {
+              $grupoDN = $grupoObj.DistinguishedName
+              if (-not (Get-ADGroupMember -Identity $grupoDN -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
+                Add-ADGroupMember -Identity $grupo -Members $username
+                Write-Output "[AGREGADO] $username a $nombreGrupo"
+              } else {
+                Write-Output "[YA ES MIEMBRO] $username en $nombreGrupo"
+              }
             }
+          } catch {
+            Write-Output "[ERROR] No se pudo procesar grupo $nombreGrupo: $($_.Exception.Message)"
           }
+        }
 
           $body = "Hola`n`n$($u.name) $($u.lastname), la contraseña de su usuario $username es $password del dominio $domain`n`nSaludos Cordiales"
           Send-MailMessage -To $u.mail -From 'Ansible Automation <ansible@gromero.net>' `
