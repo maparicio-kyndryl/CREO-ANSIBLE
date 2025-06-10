@@ -104,7 +104,7 @@
                 if ($_.Exception.Message -like "*already a member*") {
                   Write-Output "[YA ES MIEMBRO] $username en $nombreGrupo"
                 } else {
-                  Write-Output "[ERROR] $nombreGrupo: $($_.Exception.Message)"
+                  Write-Output ("[ERROR] No se pudo procesar grupo " + $nombreGrupo + ": " + $_.Exception.Message)
                 }
               }
               continue
@@ -122,7 +122,7 @@
                 }
               }
             } catch {
-              Write-Output "[ERROR] $nombreGrupo: $($_.Exception.Message)"
+              Write-Output ("[ERROR] No se pudo procesar grupo " + $nombreGrupo + ": " + $_.Exception.Message)
             }
           }
 
