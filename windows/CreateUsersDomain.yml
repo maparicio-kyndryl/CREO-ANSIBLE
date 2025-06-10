@@ -7,11 +7,11 @@
   vars:
     puerto_base_tunel_local: 59850
     usuarios:
-      - user: kyndcval
-        description: "815/K/002268/Kyndryl/Carlos Valdivia Arrunategui/"
-        name: Carlos
-        lastname: Valdivia
-        mail: Carlos.Valdivia.Arrunategui@kyndryl.com
+      - user: kyndjlanda
+        description: "815/K/6027104/Kyndryl/Jose Landa/"
+        name: Jose
+        lastname: Landa
+        mail: jose.landa@kyndryl.com
 
   pre_tasks:
     - name: Calcular puerto dinámico de túnel
