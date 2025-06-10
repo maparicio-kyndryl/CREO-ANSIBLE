@@ -1,0 +1,82 @@
+---
+- name: Habilitar usuarios AD y quitar PasswordNeverExpires
+  hosts: "{{ domain_server }}"
+  gather_facts: no
+  serial: 1
+
+  vars:
+    puerto_base_tunel_local: 59850
+    usuarios:
+      - user: kyndcechavez
+      - user: kyndarvf
+
+  pre_tasks:
+    - name: Calcular puerto dinámico de túnel
+      set_fact:
+        puerto_dinamico_tunel: "{{ puerto_base_tunel_local | int + ansible_play_hosts_all.index(inventory_hostname) | int }}"
+
+    - name: Establecer ansible_port
+      set_fact:
+        ansible_port: "{{ puerto_dinamico_tunel }}"
+
+    - name: Establecer túnel SSH
+      command: >
+        ssh -f -N -L {{ puerto_dinamico_tunel }}:{{ target_actual_ip }}:{{ target_actual_winrm_port }}
+        -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ExitOnForwardFailure=yes
+        -o ServerAliveInterval=60 -o ConnectTimeout=15
+        {{ jumphost_user }}@{{ jumphost_ip }}
+      delegate_to: localhost
+      changed_when: false
+      register: tunnel_setup_status
+
+    - name: Esperar que el túnel esté activo
+      wait_for:
+        host: 127.0.0.1
+        port: "{{ puerto_dinamico_tunel }}"
+        timeout: 20
+        delay: 2
+        state: started
+      delegate_to: localhost
+      when: tunnel_setup_status.rc == 0
+
+  tasks:
+    - name: Habilitar usuarios y quitar PasswordNeverExpires
+      win_shell: |
+        $usuarios = ConvertFrom-Json @'
+        {{ usuarios | to_json }}
+        '@
+
+        foreach ($u in $usuarios) {
+          $username = $u.user
+          $userObj = Get-ADUser -Identity $username -Properties Enabled, PasswordNeverExpires -ErrorAction SilentlyContinue
+          if ($userObj) {
+            if (-not $userObj.Enabled) {
+              Enable-ADAccount -Identity $username
+              Write-Output "[HABILITADO] $username"
+            } else {
+              Write-Output "[YA ACTIVO] $username"
+            }
+
+            if ($userObj.PasswordNeverExpires) {
+              Set-ADUser -Identity $username -PasswordNeverExpires $false
+              Write-Output "[EXPIRE CAMBIADO] $username (ahora expira)"
+            } else {
+              Write-Output "[EXPIRE OK] $username (ya expira)"
+            }
+          } else {
+            Write-Output "[NO ENCONTRADO] $username"
+          }
+        }
+      register: resultado_final
+
+    - name: Mostrar resultado
+      debug:
+        var: resultado_final.stdout_lines
+
+  post_tasks:
+    - name: Cerrar túnel SSH
+      delegate_to: localhost
+      command: >
+        pkill -f "ssh .* -L {{ puerto_dinamico_tunel}}:{{ target_actual_ip }}:{{ target_actual_winrm_port }}.*{{ jumphost_user }}@{{ jumphost_ip }}"
+      changed_when: false
+      failed_when: false
