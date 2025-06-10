@@ -44,7 +44,7 @@
       ansible.windows.win_shell: |
         $domain = (Get-ADDomain).NetBIOSName
         #Get-ADUser -Filter { SamAccountName -like "kynd*" -or SamAccountName -like "ibm*" } -Properties SamAccountName, Enabled, PasswordLastSet, PasswordNeverExpires | ForEach-Object {
-        Get-ADUser -Filter { SamAccountName -like "*prueba*" -or SamAccountName -like "*ipat*" } -Properties SamAccountName, Enabled, PasswordLastSet, PasswordNeverExpires | ForEach-Object {
+        Get-ADUser -Filter { SamAccountName -like "*fsx*" -or SamAccountName -like "*ipat*" } -Properties SamAccountName, Enabled, PasswordLastSet, PasswordNeverExpires | ForEach-Object {
           $username = $_.SamAccountName
           $estado = if ($_.Enabled) { "HABILITADO" } else { "DESHABILITADO" }
           $fecha  = if ($_.PasswordLastSet) { $_.PasswordLastSet.ToString("yyyy-MM-dd HH:mm:ss") } else { "-" }
