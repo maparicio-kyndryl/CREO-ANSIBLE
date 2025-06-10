@@ -9,6 +9,22 @@
     usuarios:
       - user: kyndcechavez
       - user: kyndarvf
+      - user: kyndpmoran
+      - user: kyndaaroni
+      - user: kyndiarbulu
+      - user: kyndoalvarez
+      - user: kyndjfranco
+      - user: kyndjlegua
+      - user: kyndegil
+      - user: kyndrmontoya
+      - user: kyndrsanchez
+      - user: kyndmartin
+      - user: kyndicortez
+      - user: kyndaluna
+      - user: kyndcval
+      - user: kyndavaldivia
+      - user: kyndjlanda
+      - user: kyndjbustios
 
   pre_tasks:
     - name: Calcular puerto dinámico de túnel
