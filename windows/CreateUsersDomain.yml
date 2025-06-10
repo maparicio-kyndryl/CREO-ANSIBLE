@@ -108,7 +108,7 @@
               }
             }
           } catch {
-            Write-Output "[ERROR] No se pudo procesar grupo $nombreGrupo: $($_.Exception.Message)"
+            Write-Output ("[ERROR] No se pudo procesar grupo $nombreGrupo: " + $_.Exception.Message)
           }
         }
 
