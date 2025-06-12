@@ -1,0 +1,13 @@
+- name: Esperar 5 minutos antes de finalizar
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Esperar 5 minutos
+      ansible.builtin.wait_for:
+        timeout: 300
+      delegate_to: localhost
+
+    - name: Mensaje final
+      ansible.builtin.debug:
+        msg: "Finalizó la espera de 5 minutos. Playbook completado."
