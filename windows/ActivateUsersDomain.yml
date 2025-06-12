@@ -25,6 +25,8 @@
       - user: kyndavaldivia
       - user: kyndjlanda
       - user: kyndjbustios
+      - user: kyndcmarin
+      - user: kyndjcollao
 
   pre_tasks:
     - name: Calcular puerto dinámico de túnel
