@@ -133,7 +133,7 @@
       when: tunnel_setup_status.rc == 0
 
   tasks:
-    - name: Crear o actualizar usuarios y enviar correo con credenciales
+    - name: Crear o actualizar usuarios
       win_shell: |
         $usuarios = ConvertFrom-Json @'
         {{ usuarios | to_json }}
