@@ -97,11 +97,6 @@
         name: Aaron
         lastname: Villalobos
         mail: Aaron.Villalobos.Farfan1@kyndryl.com
-      - user: kyndcmarin
-        description: "815/K/001624/Kyndryl/Christian Marin Calvo/"
-        name: Christian
-        lastname: Marin
-        mail: Christian.Marin.Calvo@kyndryl.com
       - user: kyndjcollao
         description: "815/K/000299/Kyndryl/Jose Collao/"
         name: Jose
