@@ -174,6 +174,11 @@
                 -Description $u.description -EmailAddress $u.mail `
                 -GivenName $u.name -Surname $u.lastname
               Set-ADAccountPassword -Identity $username -NewPassword $securePass -Reset
+              # Activar cuenta si está deshabilitada
+              $userStatus = Get-ADUser -Identity $username -Properties Enabled
+              if (-not $userStatus.Enabled) {
+                Enable-ADAccount -Identity $username
+              }
           } else {
               New-ADUser -Name "$($u.name) $($u.lastname)" -SamAccountName $username `
                 -UserPrincipalName "$username@$domain.net" `
@@ -185,9 +190,34 @@
 
           # Asegurar membresía en grupos críticos
           $grupos = @("Domain Users", "Domain Admins", "Administrators")
-          foreach ($grupo in $grupos) {
-            if (-not (Get-ADGroupMember -Identity $grupo -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
-              Add-ADGroupMember -Identity $grupo -Members $username
+          foreach ($nombreGrupo in $grupos) {
+            if ($nombreGrupo -eq "Administrators") {
+              try {
+                Add-ADGroupMember -Identity $nombreGrupo -Members $username -ErrorAction Stop
+                Write-Output "[AGREGADO] $username a $nombreGrupo"
+              } catch {
+                if ($_.Exception.Message -like "*already a member*") {
+                  Write-Output "[YA ES MIEMBRO] $username en $nombreGrupo"
+                } else {
+                  Write-Output ("[ERROR] No se pudo procesar grupo " + $nombreGrupo + ": " + $_.Exception.Message)
+                }
+              }
+              continue
+            }
+
+            try {
+              $grupo = Get-ADGroup -Filter "Name -eq '$nombreGrupo'" -ErrorAction Stop
+              if ($grupo) {
+                $grupoDN = $grupo.DistinguishedName
+                if (-not (Get-ADGroupMember -Identity $grupoDN -Recursive | Where-Object { $_.SamAccountName -eq $username })) {
+                  Add-ADGroupMember -Identity $grupoDN -Members $username
+                  Write-Output "[AGREGADO] $username a $nombreGrupo"
+                } else {
+                  Write-Output "[YA ES MIEMBRO] $username en $nombreGrupo"
+                }
+              }
+            } catch {
+              Write-Output ("[ERROR] No se pudo procesar grupo " + $nombreGrupo + ": " + $_.Exception.Message)
             }
           }
 
